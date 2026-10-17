@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canal 4 - Santiago del Estero | En Vivo</title>
+
+    <!-- Google Fonts: Montserrat & Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300..900;1,300..900&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cherry: {
+                            50: '#fff0f3',
+                            100: '#ffe3e8',
+                            200: '#f7cad1',
+                            300: '#f392a5',
+                            400: '#ed5575',
+                            500: '#d91b48',
+                            600: '#9b111e',
+                            700: '#800c17',
+                            800: '#680c14',
+                            900: '#42080d',
+                            950: '#1a0407',
+                        }
+                    },
+                    fontFamily: {
+                        montserrat: ['Montserrat', 'sans-serif'],
+                        poppins: ['Poppins', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #ffffff;
+            color: #1e293b;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6, .font-heading {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        @keyframes liveGlow {
+            0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 12px rgba(155, 17, 30, 0.8); }
+            50% { opacity: 0.6; transform: scale(0.95); box-shadow: 0 0 4px rgba(155, 17, 30, 0.4); }
+        }
+
+        .live-dot {
+            animation: liveGlow 1.8s infinite ease-in-out;
+        }
+
+        /* Olas de Mar Animadas */
+        .wave-container {
+            position: relative;
+            width: 100%;
+            height: 50px;
+            overflow: hidden;
+            line-height: 0;
+        }
+        .wave-svg {
+            position: relative;
+            display: block;
+            width: calc(200% + 1.3px);
+            height: 50px;
+            animation: moveWave 10s linear infinite;
+        }
+        @keyframes moveWave {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Canvas para Pétalos de Cerezos Cayendo */
+        #sakuraCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+        }
+    </style>
+</head>
+<body class="bg-white text-slate-800 flex flex-col min-h-screen relative overflow-x-hidden">
+
+    <!-- CANVAS DE PÉTALOS DE CEREZO CAYENDO -->
+    <canvas id="sakuraCanvas"></canvas>
+
+    <div class="bg-slate-900 text-white border-b border-slate-800 text-xs py-2 px-4">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <span class="flex items-center gap-1.5 text-slate-200 font-medium">
+                    <i class="fa-solid fa-location-dot text-cherry-500"></i> Santiago del Estero
+                </span>
+                <span class="hidden sm:inline text-slate-600">|</span>
+                <span id="liveClock" class="font-mono text-slate-300 font-semibold hidden sm:inline">--:--:-- - Santiago del Estero</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="flex items-center gap-1.5 text-amber-400 font-semibold">
+                    <i class="fa-solid fa-sun"></i> 28°C
+                </span>
+                <div class="flex items-center space-x-3 text-sm">
+                    <a href="https://www.facebook.com/profile.php?id=61595556177508" target="_blank" class="hover:text-cherry-400 transition-colors" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="https://www.youtube.com/@Canal4TDRH" target="_blank" class="hover:text-cherry-400 transition-colors" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN HEADER -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
+            
+            <!-- LOGO -->
+            <a href="#" class="flex items-center space-x-3 group">
+                <img src="https://files.catbox.moe/izhz60.png" 
+                     alt="Canal 4 Santiago del Estero" 
+                     class="h-12 w-auto object-contain transition-transform group-hover:scale-105"
+                     onerror="this.onerror=null; this.src='https://placehold.co/180x60/ffffff/000000?text=CANAL+4';">
+                <div>
+                    <span class="block font-heading font-extrabold text-lg text-slate-900 leading-none">
+                        CANAL <span class="text-slate-800">4</span>
+                    </span>
+                    <span class="block text-[10px] font-semibold tracking-wider text-slate-500 uppercase mt-0.5">
+                        Santiago del Estero
+                    </span>
+                </div>
+            </a>
+
+            <!-- NAV LINKS SIMPLIFICADOS -->
+            <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
+                <a href="#en-vivo" class="text-slate-900 hover:text-slate-600 transition-colors flex items-center gap-1 font-semibold">
+                    <i class="fa-solid fa-play text-cherry-600 text-xs"></i> En Vivo
+                </a>
+                <a href="#turismo" class="text-slate-600 hover:text-slate-900 transition-colors">Turismo</a>
+                <a href="https://www.facebook.com/profile.php?id=61595556177508" target="_blank" class="text-slate-600 hover:text-slate-900 transition-colors">
+                    Facebook
+                </a>
+                <a href="https://www.youtube.com/@Canal4TDRH" target="_blank" class="text-slate-600 hover:text-slate-900 transition-colors">
+                    YouTube
+                </a>
+            </nav>
+
+            <!-- EN VIVO BUTTON -->
+            <a href="#en-vivo" class="px-4 py-2 rounded-full font-heading font-bold text-xs uppercase tracking-wider text-white bg-slate-900 hover:bg-slate-800 shadow-sm transition-all flex items-center">
+                <span class="w-2 h-2 mr-2 rounded-full bg-cherry-500 live-dot"></span>
+                TRANSMISIÓN EN VIVO
+            </a>
+        </div>
+    </header>
+
+    <div class="wave-container bg-slate-50">
+        <svg class="wave-svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M0,0 C150,80 350,-30 500,40 C650,110 900,10 1200,35 L1200,0 L0,0 Z" fill="#0f172a" opacity="0.06"></path>
+            <path d="M0,0 C200,50 400,-10 600,30 C800,80 1000,15 1200,45 L1200,0 L0,0 Z" fill="#9b111e" opacity="0.04"></path>
+        </svg>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-6 space-y-8">
+
+        <section id="en-vivo" class="space-y-4">
+            
+            <!-- REPRODUCTOR -->
+            <div class="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-200 shadow-lg">
+                <div class="relative aspect-video flex items-center justify-center">
+                    
+                    <div id="videoScreenBg" class="absolute inset-0 bg-cover bg-center" 
+                         style="background-image: url('https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&w=1200&q=80');">
+                        <div class="absolute inset-0 bg-black/40"></div>
+                    </div>
+
+                    <div class="absolute top-4 right-4 z-10 opacity-80">
+                        <img src="https://files.catbox.moe/izhz60.png" alt="Canal 4 Watermark" class="h-8 w-auto">
+                    </div>
+
+                    <div class="relative z-20 flex flex-col items-center justify-center text-center p-4">
+                        <button id="mainPlayBtn" class="w-20 h-20 rounded-full bg-white text-slate-900 hover:bg-slate-100 flex items-center justify-center shadow-xl transition-all transform hover:scale-105 focus:outline-none mb-3">
+                            <i id="playIcon" class="fa-solid fa-play text-2xl ml-1 text-slate-900"></i>
+                        </button>
+                        <span class="text-xs font-semibold tracking-wider uppercase text-white bg-black/60 px-3 py-1 rounded-full backdrop-blur-sm border border-white/20">
+                            Iniciar Transmisión
+                        </span>
+                    </div>
+                </div>
+
+                <!-- PLAYER CONTROLS BAR -->
+                <div class="bg-slate-900 p-3 flex items-center justify-between text-white text-xs">
+                    <div class="flex items-center space-x-3">
+                        <button id="ctrlPlayBtn" class="text-slate-300 hover:text-white transition-colors text-sm">
+                            <i class="fa-solid fa-play"></i>
+                        </button>
+                        <span class="font-medium">Canal 4 Santiago del Estero - HD</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-slate-400">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                        <span class="hidden sm:inline">En Vivo</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div>
+                    <h2 class="font-heading font-bold text-slate-900 text-base">Canal 4 Santiago del Estero</h2>
+                    <p class="text-xs text-slate-500">Transmitiendo en vivo desde Las Termas de Río Hondo.</p>
+                </div>
+                <div class="flex items-center gap-3 w-full sm:w-auto">
+                    <a href="https://www.facebook.com/profile.php?id=61595556177508" target="_blank" class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold flex items-center justify-center gap-2 transition-all">
+                        <i class="fa-brands fa-facebook-f"></i> Facebook
+                    </a>
+                    <a href="https://www.youtube.com/@Canal4TDRH" target="_blank" class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-semibold flex items-center justify-center gap-2 transition-all">
+                        <i class="fa-brands fa-youtube"></i> YouTube
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="turismo" class="space-y-4 pt-2">
+            <h3 class="font-heading font-bold text-slate-900 text-lg flex items-center gap-2">
+                <i class="fa-solid fa-compass text-slate-700"></i> Turismo & Atractivos Local
+            </h3>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <a href="https://aguastermalesargentina.ar/termas/termas-de-rio-hondo/" target="_blank" class="p-4 rounded-xl bg-white border border-slate-200 hover:border-slate-400 transition-all shadow-sm hover:shadow flex justify-between items-center group">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-hot-tub-person text-slate-700 text-xl group-hover:scale-110 transition-transform"></i>
+                        <span class="font-semibold text-xs text-slate-800">Aguas Termales</span>
+                    </div>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-slate-400 text-xs"></i>
+                </a>
+
+                <a href="https://autodromotermas.com/" target="_blank" class="p-4 rounded-xl bg-white border border-slate-200 hover:border-slate-400 transition-all shadow-sm hover:shadow flex justify-between items-center group">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-flag-checkered text-slate-700 text-xl group-hover:scale-110 transition-transform"></i>
+                        <span class="font-semibold text-xs text-slate-800">Autódromo & Museo</span>
+                    </div>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-slate-400 text-xs"></i>
+                </a>
+
+                <a href="https://www.tripadvisor.com.ar/Attraction_Review-g312820-d10199274-Reviews-Dique_y_Embalse_de_Termas_de_Rio_Hondo-Termas_de_Rio_Hondo_Province_of_Santiago_.html" target="_blank" class="p-4 rounded-xl bg-white border border-slate-200 hover:border-slate-400 transition-all shadow-sm hover:shadow flex justify-between items-center group">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-water text-slate-700 text-xl group-hover:scale-110 transition-transform"></i>
+                        <span class="font-semibold text-xs text-slate-800">Dique Embalse</span>
+                    </div>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-slate-400 text-xs"></i>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <div class="wave-container bg-white mt-8">
+        <svg class="wave-svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M0,40 C300,100 600,10 900,70 L1200,20 L1200,120 L0,120 Z" fill="#0f172a"></path>
+        </svg>
+    </div>
+
+    <footer class="bg-slate-900 text-slate-400 py-6 text-xs text-center space-y-3">
+        <div class="flex justify-center space-x-5 text-base text-white">
+            <a href="https://www.facebook.com/profile.php?id=61595556177508" target="_blank" class="hover:text-cherry-400 transition-colors" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="https://www.youtube.com/@Canal4TDRH" target="_blank" class="hover:text-cherry-400 transition-colors" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+        <p>&copy; 2026 Canal 4 Santiago del Estero • Las Termas de Río Hondo, Argentina</p>
+    </footer>
+
+    <script>
+        // Clock Function
+        function updateClock() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('es-AR', { hour12: false });
+            const clockElem = document.getElementById('liveClock');
+            if (clockElem) {
+                clockElem.innerText = `${timeStr} - Santiago del Estero`;
+            }
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Player toggle simple
+        let isPlaying = false;
+        const mainPlayBtn = document.getElementById('mainPlayBtn');
+        const playIcon = document.getElementById('playIcon');
+        const ctrlPlayBtn = document.getElementById('ctrlPlayBtn');
+
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            if (isPlaying) {
+                playIcon.className = 'fa-solid fa-pause text-2xl text-slate-900';
+                ctrlPlayBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+            } else {
+                playIcon.className = 'fa-solid fa-play text-2xl ml-1 text-slate-900';
+                ctrlPlayBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+            }
+        }
+        mainPlayBtn.addEventListener('click', togglePlay);
+        ctrlPlayBtn.addEventListener('click', togglePlay);
+
+        /* --- ANIMACIÓN DE PÉTALOS DE CEREZO (SAKURA) CAYENDO --- */
+        const canvas = document.getElementById('sakuraCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const petals = [];
+        const petalCount = 30;
+
+        class Petal {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = -20;
+                this.size = Math.random() * 7 + 5;
+                this.speedY = Math.random() * 1.2 + 0.6;
+                this.speedX = Math.random() * 0.8 - 0.4;
+                this.angle = Math.random() * Math.PI * 2;
+                this.spin = (Math.random() - 0.5) * 0.02;
+                this.opacity = Math.random() * 0.6 + 0.3;
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += Math.sin(this.angle) * 0.6 + this.speedX;
+                this.angle += this.spin;
+
+                if (this.y > canvas.height + 20) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle);
+                ctx.globalAlpha = this.opacity;
+
+                ctx.beginPath();
+                ctx.fillStyle = '#f472b6'; // Rosa cerezo suave
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo(-this.size, -this.size / 2, -this.size, this.size, 0, this.size);
+                ctx.bezierCurveTo(this.size, this.size, this.size, -this.size / 2, 0, 0);
+                ctx.fill();
+
+                ctx.restore();
+            }
+        }
+
+        for (let i = 0; i < petalCount; i++) {
+            petals.push(new Petal());
+        }
+
+        function animateSakura() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            petals.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateSakura);
+        }
+
+        window.onload = function() {
+            animateSakura();
+        };
+    </script>
+</body>
+</html>
